@@ -1,0 +1,17 @@
+:root{
+
+  --azul-principal: #0A3D62;
+  --amarelo-destaque: #F1C40F;
+  --preto-menu: #1E1E1E;
+  --branco: #FFFFFF;
+  --cinza-fundo: #F4F6F8;
+
+}
+
+body{
+
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cinza-fundo);
+
+}
