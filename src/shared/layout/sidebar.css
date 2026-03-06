@@ -1,9 +1,11 @@
 .sidebar{
-  width:240px;
+
+  width:230px;
   height:100vh;
-  background:#0f172a;
+  background:#007FFF;
   color:white;
   padding:20px;
+
 }
 
 .logo{
@@ -11,16 +13,42 @@
 }
 
 .sidebar nav{
+
   display:flex;
   flex-direction:column;
-  gap:15px;
+  gap:18px;
+
 }
 
 .sidebar a{
+
   color:white;
   text-decoration:none;
+  font-weight:500;
+
 }
 
 .sidebar a:hover{
+
   color:#facc15;
+
+}
+
+
+/* RESPONSIVO */
+
+@media(max-width:768px){
+
+  .sidebar{
+
+    width:70px;
+
+  }
+
+  .sidebar a{
+
+    font-size:12px;
+
+  }
+
 }

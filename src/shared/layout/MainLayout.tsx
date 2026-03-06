@@ -1,20 +1,23 @@
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
+import "./layout.css"
 
 export function MainLayout({children}:any){
 
   return(
 
-    <div style={{display:"flex"}}>
+    <div className="layout">
 
       <Sidebar/>
 
-      <div style={{flex:1}}>
+      <div className="content">
 
         <Header/>
 
-        <main style={{padding:"20px"}}>
+        <main>
+
           {children}
+
         </main>
 
       </div>
