@@ -1,0 +1,32 @@
+table{
+
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+
+}
+
+th,td{
+
+  padding:12px;
+  border-bottom:1px solid #ddd;
+  text-align:left;
+
+}
+
+button{
+
+  background:#007FFF;
+  border:none;
+  color:white;
+  padding:6px 12px;
+  border-radius:5px;
+  cursor:pointer;
+
+}
+
+button:hover{
+
+  background:#005fcc;
+
+}

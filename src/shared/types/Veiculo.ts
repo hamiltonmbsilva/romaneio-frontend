@@ -1,0 +1,10 @@
+export interface Veiculo {
+
+  id:string
+  placa:string
+  modelo:string
+  ano:number
+  kmInicial:number
+  capacidadeKg:number
+
+}
