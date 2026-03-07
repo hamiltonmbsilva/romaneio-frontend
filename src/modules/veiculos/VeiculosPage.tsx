@@ -11,6 +11,8 @@ export function VeiculosPage(){
 
   const [veiculos,setVeiculos] = useState<Veiculo[]>([])
   const [open,setOpen] = useState(false)
+  const [busca,setBusca] = useState("")
+  const [veiculoEdit,setVeiculoEdit] = useState<Veiculo | null>(null)
 
 
   async function carregarVeiculos(){
@@ -58,9 +60,35 @@ export function VeiculosPage(){
           carregarVeiculos()
         }}/>
 
+      </Modal>  
+
+    )}
+
+    {veiculoEdit && (
+
+      <Modal onClose={()=>setVeiculoEdit(null)}>
+
+        <VeiculoForm
+          veiculo={veiculoEdit}
+          onSuccess={()=>{
+            setVeiculoEdit(null)
+            carregarVeiculos()
+          }}
+        />
+
       </Modal>
 
     )}
+
+    <div className="veiculos-filtros">
+
+      <input
+        placeholder="Buscar por placa..."
+        value={busca}
+        onChange={(e)=>setBusca(e.target.value)}
+      />
+
+    </div>
 
     <div className="table-container">
 
@@ -80,7 +108,11 @@ export function VeiculosPage(){
 
         <tbody>
 
-          {veiculos.map(v=>(
+          {veiculos
+            .filter(v =>
+              v.placa.toLowerCase().includes(busca.toLowerCase())
+            )
+            .map(v=>(
 
             <tr key={v.id}>
 
@@ -90,6 +122,10 @@ export function VeiculosPage(){
               <td>{v.capacidadeKg} kg</td>
 
               <td>
+
+                <button onClick={()=>setVeiculoEdit(v)}>
+                  Editar
+                </button>
 
                 <button onClick={()=>excluir(v.id)}>
                   Excluir

@@ -24,3 +24,11 @@ export async function deletarVeiculo(id:string){
   return response.data
 
 }
+
+export async function atualizarVeiculo(id:string,data:any){
+
+  const response = await api.put(`/veiculo/${id}`,data)
+
+  return response.data
+
+}

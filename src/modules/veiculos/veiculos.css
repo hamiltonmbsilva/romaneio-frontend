@@ -83,3 +83,19 @@ td button:hover{
   background:#d9363e;
 
 }
+
+.veiculos-filtros{
+
+  margin-bottom:20px;
+
+}
+
+.veiculos-filtros input{
+
+  padding:10px;
+  width:250px;
+
+  border:1px solid #ddd;
+  border-radius:6px;
+
+}

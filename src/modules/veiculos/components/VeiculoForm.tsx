@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { criarVeiculo } from "../services/veiculoService"
+import { criarVeiculo, atualizarVeiculo} from "../services/veiculoService"
 import "./veiculoForm.css"
 
 type FormData = {
@@ -10,25 +10,25 @@ type FormData = {
   kmInicial:number
 }
 
-export function VeiculoForm({onSuccess}:any){
+export function VeiculoForm({onSuccess,veiculo}:any){
 
-  const {register,handleSubmit,formState:{errors}} = useForm<FormData>()
+  const {register,handleSubmit,formState:{errors}} = useForm<FormData>({
+          defaultValues: veiculo
+        })
 
   async function onSubmit(data:FormData){
 
-    try{
+      if(veiculo){
 
-            await criarVeiculo(data)
+        await atualizarVeiculo(veiculo.id,data)
 
-            onSuccess()
+      }else{
 
-        }catch(error){
+        await criarVeiculo(data)
 
-            console.error(error)
+      }
 
-            alert("Erro ao salvar veículo")
-
-    } 
+      onSuccess()
 
   }
 
