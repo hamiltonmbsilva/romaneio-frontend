@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { criarVeiculo } from "../services/veiculoService"
+import "./veiculoForm.css"
 
 type FormData = {
   placa:string
@@ -15,22 +16,32 @@ export function VeiculoForm({onSuccess}:any){
 
   async function onSubmit(data:FormData){
 
-    await criarVeiculo(data)
+    try{
 
-    onSuccess()
+            await criarVeiculo(data)
+
+            onSuccess()
+
+        }catch(error){
+
+            console.error(error)
+
+            alert("Erro ao salvar veículo")
+
+    } 
 
   }
 
   return(
 
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className="veiculo-form" onSubmit={handleSubmit(onSubmit)}>
 
       <input
         placeholder="Placa"
         {...register("placa",{required:true})}
       />
 
-      {errors.placa && <span>Placa obrigatória</span>}
+      {errors.placa && <span className="error">Placa obrigatória</span>}
 
       <input
         placeholder="Modelo"
