@@ -4,6 +4,7 @@ import type { Veiculo } from "../../shared/types/Veiculo"
 import "./veiculos.css"
 import { VeiculoForm } from "./components/VeiculoForm"
 import { Modal } from "../../shared/components/Modal"
+import { alterarStatus } from "./services/veiculoService"
 
 
 
@@ -28,6 +29,14 @@ export function VeiculosPage(){
     await deletarVeiculo(id)
 
     carregarVeiculos()
+
+  }
+
+  async function mudarStatus(id:string){
+
+  await alterarStatus(id)
+
+  carregarVeiculos()
 
   }
 
@@ -101,6 +110,9 @@ export function VeiculosPage(){
             <th>Modelo</th>
             <th>Ano</th>
             <th>Capacidade</th>
+            <th>Historico</th>
+            <th>Status</th>
+            <th>Ativar Status</th>
             <th>Ações</th>
           </tr>
 
@@ -120,6 +132,29 @@ export function VeiculosPage(){
               <td>{v.modelo}</td>
               <td>{v.ano}</td>
               <td>{v.capacidadeKg} kg</td>
+              <td>
+                <button>
+                Histórico KM
+                </button>
+              </td>              
+
+              <td>
+
+                {v.ativo ? (
+                  <span className="status ativo">Ativo</span>
+                ) : (
+                  <span className="status inativo">Inativo</span>
+                )}                
+
+              </td>
+
+              <td>
+                 <button onClick={()=>mudarStatus(v.id)}>
+                  
+                  {v.ativo ? "Desativar" : "Ativar"}
+
+                </button>
+              </td>
 
               <td>
 
@@ -130,6 +165,8 @@ export function VeiculosPage(){
                 <button onClick={()=>excluir(v.id)}>
                   Excluir
                 </button>
+
+               
 
               </td>
 

@@ -32,3 +32,11 @@ export async function atualizarVeiculo(id:string,data:any){
   return response.data
 
 }
+
+export async function alterarStatus(id:string){
+
+  const response = await api.put(`/veiculo/${id}/status`)
+
+  return response.data
+
+}

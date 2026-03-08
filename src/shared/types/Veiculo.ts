@@ -6,5 +6,5 @@ export interface Veiculo {
   ano:number
   kmInicial:number
   capacidadeKg:number
-
+  ativo:boolean
 }

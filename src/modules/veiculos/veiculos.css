@@ -99,3 +99,37 @@ td button:hover{
   border-radius:6px;
 
 }
+
+.status{
+
+ padding:4px 10px;
+ border-radius:20px;
+ font-size:12px;
+ font-weight:600;
+
+}
+
+.status.ativo{
+
+ background:#e6f7ee;
+ color:#1f9254;
+
+}
+
+.status.inativo{
+
+ background:#fdecea;
+ color:#d93025;
+
+}
+
+@media (max-width:768px){
+
+table{
+
+ display:block;
+ overflow-x:auto;
+
+}
+
+}
