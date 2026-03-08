@@ -5,6 +5,7 @@ import "./veiculos.css"
 import { VeiculoForm } from "./components/VeiculoForm"
 import { Modal } from "../../shared/components/Modal"
 import { alterarStatus } from "./services/veiculoService"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -14,6 +15,7 @@ export function VeiculosPage(){
   const [open,setOpen] = useState(false)
   const [busca,setBusca] = useState("")
   const [veiculoEdit,setVeiculoEdit] = useState<Veiculo | null>(null)
+  const navigate = useNavigate()
 
 
   async function carregarVeiculos(){
@@ -133,8 +135,11 @@ export function VeiculosPage(){
               <td>{v.ano}</td>
               <td>{v.capacidadeKg} kg</td>
               <td>
-                <button>
-                Histórico KM
+                <button
+                    className="historico-btn"
+                    onClick={()=>navigate(`/veiculos/${v.id}/historico`)}
+                    >
+                    Histórico KM
                 </button>
               </td>              
 

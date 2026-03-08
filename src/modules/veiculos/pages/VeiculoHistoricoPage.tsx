@@ -1,64 +1,197 @@
 import { useEffect, useState } from "react"
 import { listarHistorico } from "../services/veiculoKmService"
+import { Modal } from "../../../shared/components/Modal"
+import { RegistrarSaidaForm } from "../components/RegistrarSaidaForm"
+import { RegistrarRetornoForm } from "../components/RegistrarRetornoForm"
+import "../historico.css"
+import { useParams } from "react-router-dom"
 
 export function VeiculoHistoricoPage({veiculoId}:any){
 
-  const [historico,setHistorico] = useState<any[]>([])
+ const { id } = useParams()
+ 
 
-  async function carregar(){
+ const [historico,setHistorico] = useState<any[]>([])
+ const [modalSaida,setModalSaida] = useState(false)
+ const [modalRetorno,setModalRetorno] = useState<any>(null)
 
-    const data = await listarHistorico(veiculoId)
+ async function carregar(){
 
-    setHistorico(data)
+  const data = await listarHistorico(veiculoId)
 
-  }
+  setHistorico(data)
 
-  useEffect(()=>{
+ }
 
-    carregar()
+ useEffect(()=>{
 
-  },[])
+  carregar()
 
-  return(
+ },[])
 
-    <div>
+    const kmAtual = historico.length
+      ? historico[0].kmRetorno ?? historico[0].kmSaida
+      : 0
 
-      <h2>Histórico de KM</h2>
+    const totalViagens = historico.length
 
-      <table>
+    const kmTotal = historico.reduce((acc,h)=>{
+      return acc + (h.kmRodado ?? 0)
+    },0)
 
-        <thead>
+    const viagemAberta = historico.find(h => !h.kmRetorno)
 
-          <tr>
-            <th>KM Saída</th>
-            <th>KM Retorno</th>
-            <th>KM Rodado</th>
-            <th>Data Saída</th>
-          </tr>
 
-        </thead>
+ return(
 
-        <tbody>
+  <div className="historico-container">
 
-          {historico.map(h =>(
+   <div className="historico-header">
 
-            <tr key={h.id}>
+    <h2>Histórico de KM</h2>
 
-              <td>{h.kmSaida}</td>
-              <td>{h.kmRetorno}</td>
-              <td>{h.kmRodado}</td>
-              <td>{new Date(h.dataSaida).toLocaleDateString()}</td>
+    <div className="acoes">
 
-            </tr>
+      {!viagemAberta && (
 
-          ))}
+        <button
+        className="btn-saida"
+        onClick={()=>setModalSaida(true)}
+        >
+        Registrar Saída
+        </button>
 
-        </tbody>
-
-      </table>
+      )}
 
     </div>
 
-  )
+   </div>
+
+   <div className="dashboard-km">
+
+  <div className="card">
+
+    <h4>KM Atual</h4>
+    <p>{kmAtual}</p>
+
+  </div>
+
+  <div className="card">
+
+    <h4>Total de Viagens</h4>
+    <p>{totalViagens}</p>
+
+  </div>
+
+  <div className="card">
+
+    <h4>KM Rodado</h4>
+    <p>{kmTotal}</p>
+
+  </div>
+
+  <div className="card">
+
+    <h4>Status</h4>
+
+    {viagemAberta ? (
+      <span className="status andamento">
+        Em viagem
+      </span>
+    ):(
+      <span className="status parado">
+        Disponível
+      </span>
+    )}
+
+  </div>
+
+  </div>
+
+   <table>
+
+    <thead>
+
+     <tr>
+      <th>KM Saída</th>
+      <th>KM Retorno</th>
+      <th>KM Rodado</th>
+      <th>Data</th>
+      <th>Ações</th>
+     </tr>
+
+    </thead>
+
+    <tbody>
+
+     {historico.map(h =>(
+
+      <tr key={h.id}>
+
+       <td>{h.kmSaida}</td>
+
+       <td>{h.kmRetorno ?? "-"}</td>
+
+       <td>{h.kmRodado ?? "-"}</td>
+
+       <td>
+        {new Date(h.dataSaida).toLocaleDateString()}
+       </td>
+
+       <td>
+
+        {!h.kmRetorno && (
+
+         <button onClick={()=>setModalRetorno(h)}>
+          Registrar Retorno
+         </button>
+
+        )}
+
+       </td>
+
+      </tr>
+
+     ))}
+
+    </tbody>
+
+   </table>
+
+   {modalSaida && (
+
+    <Modal onClose={()=>setModalSaida(false)}>
+
+      <RegistrarSaidaForm
+       veiculoId={id}
+       onSuccess={()=>{
+        setModalSaida(false)
+        carregar()
+       }}
+      />
+
+    </Modal>
+
+   )}
+
+   {modalRetorno && (
+
+    <Modal onClose={()=>setModalRetorno(null)}>
+
+      <RegistrarRetornoForm
+       registro={modalRetorno}
+       onSuccess={()=>{
+        setModalRetorno(null)
+        carregar()
+       }}
+      />
+
+    </Modal>
+
+   )}
+
+  </div>
+
+ )
 
 }
