@@ -192,6 +192,34 @@ th,td{
 
 }
 
+.paginacao{
+
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:15px;
+ margin-top:20px;
+
+}
+
+.paginacao button{
+
+ background:#007FFF;
+ color:white;
+ border:none;
+ padding:8px 14px;
+ border-radius:6px;
+ cursor:pointer;
+
+}
+
+.paginacao button:disabled{
+
+ background:#ccc;
+ cursor:not-allowed;
+
+}
+
 @media (max-width:768px){
 
  table{
@@ -202,13 +230,13 @@ th,td{
  }
 
  .acoes-tabela{
- flex-direction:column;
-}
+    flex-direction:column;
+    }
 
-.btn-retorno,
-.btn-editar{
- width:100%;
-}
+    .btn-retorno,
+    .btn-editar{
+    width:100%;
+    }
 
 }
 

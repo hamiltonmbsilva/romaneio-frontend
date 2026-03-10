@@ -27,6 +27,16 @@ const { id: veiculoId } = useParams()
  const [modalSaida,setModalSaida] = useState(false)
  const [modalRetorno,setModalRetorno] = useState<any>(null)
  const [modalEditar,setModalEditar] = useState<any>(null)
+
+ const [pagina,setPagina] = useState(1)
+ const itensPorPagina = 5
+
+ const inicio = (pagina - 1) * itensPorPagina
+ const fim = inicio + itensPorPagina
+
+ const historicoPaginado = historico.slice(inicio,fim)
+
+ const totalPaginas = Math.ceil(historico.length / itensPorPagina)
  
 
   async function carregar(){
@@ -194,7 +204,7 @@ const { id: veiculoId } = useParams()
 
         <tbody>
 
-        {historico.map(h =>(
+        {historicoPaginado.map(h =>(
 
           <tr key={h.id}>
 
@@ -244,6 +254,29 @@ const { id: veiculoId } = useParams()
         </tbody>
 
       </table>
+
+      <div className="paginacao">
+
+        <button
+        disabled={pagina === 1}
+        onClick={()=>setPagina(pagina - 1)}
+        >
+        Anterior
+        </button>
+
+        <span>
+        Página {pagina} de {totalPaginas}
+        </span>
+
+        <button
+        disabled={pagina === totalPaginas}
+        onClick={()=>setPagina(pagina + 1)}
+        >
+        Próxima
+        </button>
+
+      </div>
+
 
       <div className="grafico">
 

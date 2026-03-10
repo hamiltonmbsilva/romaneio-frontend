@@ -1,33 +1,29 @@
-import { useForm } from "react-hook-form"
+import { useState } from "react"
 import { registrarRetorno } from "../services/veiculoKmService"
 
-export function RegistrarRetornoForm({registro,onSuccess}:any){
+export function RegistrarRetornoForm({ registro, onSuccess }: any){
 
- const {register,handleSubmit} = useForm()
+ const [kmRetorno,setKmRetorno] = useState("")
 
- async function onSubmit(data:any){
+ async function onSubmit(e:any){
+  e.preventDefault()
 
-  await registrarRetorno(
-   registro.id,
-   Number(data.kmRetorno)
-  )
+  await registrarRetorno(registro.id, Number(kmRetorno))
 
   onSuccess()
-
  }
 
  return(
 
-  <form onSubmit={handleSubmit(onSubmit)}>
+  <form onSubmit={onSubmit} className="form-km">
 
    <h3>Registrar Retorno</h3>
 
-   <p>KM Saída: {registro.kmSaida}</p>
-
    <input
     type="number"
-    placeholder="KM Retorno"
-    {...register("kmRetorno",{required:true})}
+    placeholder="KM retorno"
+    value={kmRetorno}
+    onChange={e=>setKmRetorno(e.target.value)}
    />
 
    <button type="submit">
@@ -37,5 +33,4 @@ export function RegistrarRetornoForm({registro,onSuccess}:any){
   </form>
 
  )
-
 }
