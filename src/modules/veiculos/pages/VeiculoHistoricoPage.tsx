@@ -6,28 +6,31 @@ import { RegistrarRetornoForm } from "../components/RegistrarRetornoForm"
 import "../historico.css"
 import { useParams } from "react-router-dom"
 
-export function VeiculoHistoricoPage({veiculoId}:any){
 
- const { id } = useParams()
+export function VeiculoHistoricoPage(){
+
+const { id: veiculoId } = useParams()
  
 
  const [historico,setHistorico] = useState<any[]>([])
  const [modalSaida,setModalSaida] = useState(false)
  const [modalRetorno,setModalRetorno] = useState<any>(null)
 
- async function carregar(){
+  async function carregar(){
 
-  const data = await listarHistorico(veiculoId)
+    if(!veiculoId) return
 
-  setHistorico(data)
+    const data = await listarHistorico(veiculoId)
 
- }
+    setHistorico(data)
+
+  }
 
  useEffect(()=>{
 
-  carregar()
+ carregar()
 
- },[])
+},[veiculoId])
 
     const kmAtual = historico.length
       ? historico[0].kmRetorno ?? historico[0].kmSaida
@@ -163,7 +166,7 @@ export function VeiculoHistoricoPage({veiculoId}:any){
     <Modal onClose={()=>setModalSaida(false)}>
 
       <RegistrarSaidaForm
-       veiculoId={id}
+       veiculoId={veiculoId}
        onSuccess={()=>{
         setModalSaida(false)
         carregar()

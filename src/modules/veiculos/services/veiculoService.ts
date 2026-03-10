@@ -11,9 +11,19 @@ export async function listarVeiculos():Promise<Veiculo[]> {
 
 export async function criarVeiculo(data:Omit<Veiculo,"id">){
 
-  const response = await api.post("/veiculo",data)
+  try{
+    
+    const response = await api.post("/veiculo",data)
 
-  return response.data
+    return response.data
+
+  }catch(error:any){
+
+    console.error("ERRO API:",error.response?.data)
+
+    throw error
+
+  }
 
 }
 
