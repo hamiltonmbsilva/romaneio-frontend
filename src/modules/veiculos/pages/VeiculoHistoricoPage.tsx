@@ -1,3 +1,12 @@
+import {
+ LineChart,
+ Line,
+ XAxis,
+ YAxis,
+ Tooltip,
+ CartesianGrid,
+ ResponsiveContainer
+} from "recharts"
 import { useEffect, useState } from "react"
 import { listarHistorico } from "../services/veiculoKmService"
 import { Modal } from "../../../shared/components/Modal"
@@ -5,9 +14,11 @@ import { RegistrarSaidaForm } from "../components/RegistrarSaidaForm"
 import { RegistrarRetornoForm } from "../components/RegistrarRetornoForm"
 import "../historico.css"
 import { useParams } from "react-router-dom"
+import { EditarKmForm } from "../components/EditarKmForm"
 
 
 export function VeiculoHistoricoPage(){
+  
 
 const { id: veiculoId } = useParams()
  
@@ -15,6 +26,8 @@ const { id: veiculoId } = useParams()
  const [historico,setHistorico] = useState<any[]>([])
  const [modalSaida,setModalSaida] = useState(false)
  const [modalRetorno,setModalRetorno] = useState<any>(null)
+ const [modalEditar,setModalEditar] = useState<any>(null)
+ 
 
   async function carregar(){
 
@@ -26,172 +39,298 @@ const { id: veiculoId } = useParams()
 
   }
 
+  function editarRegistro(registro:any){
+
+    setModalEditar(registro)
+
+  }
+
+  const dadosGrafico = historico
+  .filter(h => h.kmRodado)
+  .map((h,index) => ({
+
+    viagem: index + 1,
+    km: h.kmRodado
+
+  }))
+
  useEffect(()=>{
 
  carregar()
 
 },[veiculoId])
 
-    const kmAtual = historico.length
-      ? historico[0].kmRetorno ?? historico[0].kmSaida
-      : 0
+    const ultimoRegistro = historico[0]
 
-    const totalViagens = historico.length
+    const kmAtual = ultimoRegistro
+    ? ultimoRegistro.kmRetorno ?? ultimoRegistro.kmSaida
+    : 0
+
+    const ultimaSaida = historico[0]?.dataSaida
+
+    const ultimoRetorno = historico.find(h => h.kmRetorno)?.dataRetorno
+
+    const totalViagens = historico.length   
 
     const kmTotal = historico.reduce((acc,h)=>{
       return acc + (h.kmRodado ?? 0)
     },0)
 
-    const viagemAberta = historico.find(h => !h.kmRetorno)
+     const mediaKm = totalViagens
+    ? Math.round(kmTotal / totalViagens)
+    : 0
+
+    const viagemAberta = historico.some(h => h.kmRetorno === null)
+
+    const precisaManutencao = kmTotal >= 5000
 
 
  return(
 
-  <div className="historico-container">
+      <div className="historico-container">
 
-   <div className="historico-header">
+      <div className="historico-header">
 
-    <h2>Histórico de KM</h2>
+        <h2>Histórico de KM</h2>
 
-    <div className="acoes">
+        {!viagemAberta && (
+          <button
+            className="btn-saida"
+            onClick={() => setModalSaida(true)}
+          >
+            Registrar Saída
+          </button>
+        )}
 
-      {!viagemAberta && (
+      </div>
 
-        <button
-        className="btn-saida"
-        onClick={()=>setModalSaida(true)}
-        >
-        Registrar Saída
-        </button>
+      <div className="dashboard-km">
 
-      )}
+        <div className="card">
 
-    </div>
+      <h4>Última Saída</h4>
 
-   </div>
+      <p>
+        {ultimaSaida
+        ? new Date(ultimaSaida).toLocaleDateString()
+        : "-"}
+      </p>
 
-   <div className="dashboard-km">
+      </div>
 
-  <div className="card">
+      <div className="card">
 
-    <h4>KM Atual</h4>
-    <p>{kmAtual}</p>
+      <h4>Último Retorno</h4>
 
-  </div>
+      <p>
+        {ultimoRetorno
+        ? new Date(ultimoRetorno).toLocaleDateString()
+        : "-"}
+      </p>
 
-  <div className="card">
+      </div>
 
-    <h4>Total de Viagens</h4>
-    <p>{totalViagens}</p>
+      <div className="card">
 
-  </div>
+        <h4>KM Atual</h4>
+        <p>{kmAtual}</p>
 
-  <div className="card">
+      </div>
 
-    <h4>KM Rodado</h4>
-    <p>{kmTotal}</p>
+      <div className="card">
 
-  </div>
+        <h4>Total de Viagens</h4>
+        <p>{totalViagens}</p>
 
-  <div className="card">
+      </div>
 
-    <h4>Status</h4>
+      <div className="card">
 
-    {viagemAberta ? (
-      <span className="status andamento">
-        Em viagem
-      </span>
-    ):(
-      <span className="status parado">
-        Disponível
-      </span>
-    )}
+        <h4>Média KM / Viagem</h4>
 
-  </div>
+      <p>{mediaKm}</p>
 
-  </div>
+      </div>
 
-   <table>
+      <div className="card">
 
-    <thead>
+        <h4>KM Rodado</h4>
+        <p>{kmTotal}</p>
 
-     <tr>
-      <th>KM Saída</th>
-      <th>KM Retorno</th>
-      <th>KM Rodado</th>
-      <th>Data</th>
-      <th>Ações</th>
-     </tr>
+      </div>
 
-    </thead>
+      <div className="card">
 
-    <tbody>
+        <h4>Status</h4>
 
-     {historico.map(h =>(
+        {viagemAberta ? (
+          <span className="status andamento">
+            Em viagem
+          </span>
+        ):(
+          <span className="status parado">
+            Disponível
+          </span>
+        )}
 
-      <tr key={h.id}>
+      </div>
 
-       <td>{h.kmSaida}</td>
+      </div>
 
-       <td>{h.kmRetorno ?? "-"}</td>
+      <table>
 
-       <td>{h.kmRodado ?? "-"}</td>
+        <thead>
 
-       <td>
-        {new Date(h.dataSaida).toLocaleDateString()}
-       </td>
+        <tr>
+          <th>KM Saída</th>
+          <th>KM Retorno</th>
+          <th>KM Rodado</th>
+          <th>Data Saída</th>
+          <th>Data Retorno</th>
+          <th>Ações</th>
+        </tr>
 
-       <td>
+        </thead>
 
-        {!h.kmRetorno && (
+        <tbody>
 
-         <button onClick={()=>setModalRetorno(h)}>
-          Registrar Retorno
-         </button>
+        {historico.map(h =>(
+
+          <tr key={h.id}>
+
+            <td>{h.kmSaida}</td>
+
+            <td>{h.kmRetorno ?? "-"}</td>
+
+            <td>{h.kmRodado ?? "-"}</td>
+
+            <td>
+              {new Date(h.dataSaida).toLocaleDateString()}
+            </td>
+
+            <td>
+              {h.dataRetorno
+                ? new Date(h.dataRetorno).toLocaleDateString()
+                : "-"
+              }
+            </td>
+
+            <td className="acoes-tabela">
+
+            {h.kmRetorno === null && (
+
+              <button
+              className="btn-retorno"
+              onClick={()=>setModalRetorno(h)}
+              >
+              Registrar Retorno
+              </button>
+
+            )}
+
+            <button
+              className="btn-editar"
+              onClick={()=>editarRegistro(h)}
+            >
+              Editar
+            </button>
+
+            </td>
+
+          </tr>
+
+        ))}
+
+        </tbody>
+
+      </table>
+
+      <div className="grafico">
+
+        <h3>KM por viagem</h3>
+
+        <ResponsiveContainer width="100%" height={300}>
+
+        <LineChart data={dadosGrafico}>
+
+          <CartesianGrid strokeDasharray="3 3" />
+
+          <XAxis dataKey="viagem" />
+
+          <YAxis />
+
+          <Tooltip />
+
+          <Line
+          type="monotone"
+          dataKey="km"
+          stroke="#007FFF"
+          strokeWidth={3}
+          />
+
+        </LineChart>
+
+        </ResponsiveContainer>
+
+        </div>
+
+        {modalSaida && (
+
+            <Modal onClose={()=>setModalSaida(false)}>
+
+              <RegistrarSaidaForm
+              veiculoId={veiculoId}
+              onSuccess={()=>{
+                setModalSaida(false)
+                carregar()
+              }}
+              />
+
+            </Modal>
 
         )}
 
-       </td>
+      {modalRetorno && (
 
-      </tr>
+        <Modal onClose={()=>setModalRetorno(null)}>
 
-     ))}
+          <RegistrarRetornoForm
+          registro={modalRetorno}
+          onSuccess={()=>{
+            setModalRetorno(null)
+            carregar()
+          }}
+          />
 
-    </tbody>
+        </Modal>
 
-   </table>
+      )}
 
-   {modalSaida && (
+      {precisaManutencao && (
 
-    <Modal onClose={()=>setModalSaida(false)}>
+        <div className="alerta-manutencao">
 
-      <RegistrarSaidaForm
-       veiculoId={veiculoId}
-       onSuccess={()=>{
-        setModalSaida(false)
-        carregar()
-       }}
-      />
+          ⚠ Veículo precisa de manutenção
 
-    </Modal>
+        </div>
 
-   )}
+        )}
 
-   {modalRetorno && (
+        {modalEditar && (
 
-    <Modal onClose={()=>setModalRetorno(null)}>
+        <Modal onClose={()=>setModalEditar(null)}>
 
-      <RegistrarRetornoForm
-       registro={modalRetorno}
-       onSuccess={()=>{
-        setModalRetorno(null)
-        carregar()
-       }}
-      />
+          <EditarKmForm
+            registro={modalEditar}
+            onSuccess={()=>{
+              setModalEditar(null)
+              carregar()
+            }}
+          />
 
-    </Modal>
+        </Modal>
 
-   )}
+        )}
 
   </div>
 

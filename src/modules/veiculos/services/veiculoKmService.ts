@@ -25,3 +25,18 @@ export async function listarHistorico(veiculoId:string){
  return response.data
 
 }
+
+export async function atualizarKm(data:{
+  id:string
+  kmSaida:number
+  kmRetorno:number | null
+}){
+
+  const response = await api.patch(`/veiculo-km/${data.id}`,{
+    kmSaida:data.kmSaida,
+    kmRetorno:data.kmRetorno
+  })
+
+  return response.data
+
+}
