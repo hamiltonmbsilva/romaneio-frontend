@@ -1,5 +1,4 @@
-import { TextField, Stack } from "@mui/material"
-
+import { TextField, Stack, Autocomplete } from "@mui/material"
 export default function FiltroClientes({
  search,
  setSearch,
@@ -38,7 +37,17 @@ export default function FiltroClientes({
     onChange={(e) => setEstado(e.target.value)}
    />
 
+   <Autocomplete
+    options={cidade}
+    onChange={(e,v)=>setCidade(v)}
+    renderInput={(params)=>(
+    <TextField {...params} label="Cidade"/>
+    )}
+    />
+
   </Stack>
+
+  
 
  )
 }

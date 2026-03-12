@@ -81,11 +81,15 @@ export default function ClientesPage(){
 
    <ClienteTable
     clientes={clientes}
+    loading={loading}
     onEdit={(c:any)=>{
-     setClienteEdit(c)
-     setOpenModal(true)
+    setClienteEdit(c)
+    setOpenModal(true)
     }}
-   />
+    onDelete={(id:string)=>{
+    console.log("deletar",id)
+    }}
+    />
 
   )}
 
