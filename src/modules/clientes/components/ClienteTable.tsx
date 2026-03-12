@@ -1,50 +1,69 @@
-export default function ClienteTable({clientes,onEdit,onDelete}:any){
+import { DataGrid } from "@mui/x-data-grid"
+import { IconButton } from "@mui/material"
+import EditIcon from "@mui/icons-material/Edit"
+import DeleteIcon from "@mui/icons-material/Delete"
+
+export default function ClienteTable({
+ clientes,
+ loading,
+ onEdit,
+ onDelete
+}: any) {
+
+ const columns = [
+
+  { field:"nomeFantasia", headerName:"Nome", flex:1 },
+
+  { field:"cidade", headerName:"Cidade", flex:1 },
+
+  { field:"estado", headerName:"Estado", width:120 },
+
+  { field:"endereco", headerName:"Endereço", flex:1 },
+
+  {
+   field:"acoes",
+   headerName:"Ações",
+   width:120,
+   renderCell:(params:any)=>(
+    <>
+     <IconButton
+      color="primary"
+      onClick={()=>onEdit(params.row)}
+     >
+      <EditIcon/>
+     </IconButton>
+
+     <IconButton
+      color="error"
+      onClick={()=>onDelete(params.row.id)}
+     >
+      <DeleteIcon/>
+     </IconButton>
+    </>
+   )
+  }
+
+ ]
 
  return(
 
-  <table border={1} cellPadding={10} style={{width:"100%"}}>
+  <DataGrid
+   rows={clientes}
+   columns={columns}
+   getRowId={(row)=>row.id}
 
-   <thead>
-    <tr>
-     <th>Nome</th>
-     <th>Cidade</th>
-     <th>Telefone</th>
-     <th>Status</th>
-     <th>Ações</th>
-    </tr>
-   </thead>
+   loading={loading}
 
-   <tbody>
+   pageSizeOptions={[10]}
 
-    {clientes.map((c:any)=>(
-     <tr key={c.id}>
+   initialState={{
+    pagination:{
+     paginationModel:{pageSize:10,page:0}
+    }
+   }}
 
-      <td>{c.nomeFantasia}</td>
-      <td>{c.cidade}</td>
-      <td>{c.telefone}</td>
-
-      <td>
-       {c.ativo ? "Ativo":"Inativo"}
-      </td>
-
-      <td>
-
-       <button onClick={()=>onEdit(c)}>
-        Editar
-       </button>
-
-       <button onClick={()=>onDelete(c.id)}>
-        Deletar
-       </button>
-
-      </td>
-
-     </tr>
-    ))}
-
-   </tbody>
-
-  </table>
+   disableRowSelectionOnClick
+  />
 
  )
 }

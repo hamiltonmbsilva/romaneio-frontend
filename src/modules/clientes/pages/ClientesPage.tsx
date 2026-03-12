@@ -1,65 +1,107 @@
 import { useEffect, useState } from "react"
-import { listarClientes, deletarCliente } from "../services/clienteService"
+import {
+ Container,
+ Typography,
+ Button,
+ CircularProgress
+} from "@mui/material"
+
 import ClienteTable from "../components/ClienteTable"
-import ClienteForm from "../components/ClienteForm"
+import ClienteModal from "../components/ClienteModal"
+import FiltroClientes from "../components/FiltroClientes"
+
+import { listarClientes } from "../services/clienteService"
+
+//import { debounce } from "lodash"
 
 export default function ClientesPage(){
 
- const [clientes,setClientes] = useState([])
- const [page,setPage] = useState(1)
- const [search,setSearch] = useState("")
+ const [clientes,setClientes] = useState<any[]>([])
+ const [loading,setLoading] = useState(false)
+ const [openModal,setOpenModal] = useState(false)
  const [clienteEdit,setClienteEdit] = useState<any>(null)
 
+ const [search,setSearch] = useState("")
+ const [cidade,setCidade] = useState("")
+ const [estado,setEstado] = useState("")
+
  const carregar = async ()=>{
-  const data = await listarClientes(page,search)
+
+  setLoading(true)
+
+  const data = await listarClientes(1,search)
+
   setClientes(data)
+
+  setLoading(false)  
+
  }
+
+ 
+
+//  const buscar = debounce((value:string)=>{
+
+//  setSearch(value)
+
+// },500)
 
  useEffect(()=>{
   carregar()
- },[page,search])
-
- const remover = async (id:string)=>{
-  if(confirm("Deseja deletar cliente?")){
-   await deletarCliente(id)
-   carregar()
-  }
- }
+ },[search])
 
  return(
 
-  <div style={{padding:20}}>
+ <Container>
 
-   <h2>Clientes</h2>
+  <Typography variant="h4" marginBottom={3}>
+   Clientes
+  </Typography>
+  
 
-   <ClienteForm
-    cliente={clienteEdit}
-    onSuccess={()=>{
-     setClienteEdit(null)
-     carregar()
-    }}
-   />
+  <FiltroClientes
+   search={search}
+   setSearch={setSearch}
+   cidade={cidade}
+   setCidade={setCidade}
+   estado={estado}
+   setEstado={setEstado}
+  />
 
-   <input
-    placeholder="Buscar cliente..."
-    value={search}
-    onChange={(e)=>setSearch(e.target.value)}
-    style={{marginBottom:10}}
-   />
+  <Button
+   variant="contained"
+   onClick={()=>setOpenModal(true)}
+   style={{marginBottom:20}}
+  >
+   Novo Cliente
+  </Button>
+
+  {loading ? (
+   <CircularProgress/>
+  ) : (
 
    <ClienteTable
     clientes={clientes}
-    onEdit={(c:any)=>setClienteEdit(c)}
-    onDelete={remover}
+    onEdit={(c:any)=>{
+     setClienteEdit(c)
+     setOpenModal(true)
+    }}
    />
 
-   <div style={{marginTop:20}}>
-    <button onClick={()=>setPage(page-1)}>Anterior</button>
-    <span style={{margin:"0 10px"}}>Página {page}</span>
-    <button onClick={()=>setPage(page+1)}>Próxima</button>
-   </div>
+  )}
 
-  </div>
+  <ClienteModal
+   open={openModal}
+   onClose={()=>{
+
+    setOpenModal(false)
+    setClienteEdit(null)
+
+   }}
+   cliente={clienteEdit}
+   onSuccess={carregar}
+  />
+
+ </Container>
 
  )
 }
