@@ -22,9 +22,7 @@ export const criarCliente = async(data:any)=>{
 
 export const atualizarCliente = async (id:string,data:any)=>{
 
-console.log("ClienteService primeira parte", id , data)
-
- const response = await api.put(`/cliente/${id}`,data)
+ const response = await api.patch(`/cliente/${id}`,data)
 
  console.log("ClienteService",response)
 
@@ -33,5 +31,9 @@ console.log("ClienteService primeira parte", id , data)
 }
 
 export const deletarCliente = async (id:string)=>{
+
+    console.log("Deletar primeira parte ", id)
+    
  return api.delete(`/cliente/${id}`)
+    
 }
