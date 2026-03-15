@@ -23,9 +23,6 @@ export const criarCliente = async(data:any)=>{
 export const atualizarCliente = async (id:string,data:any)=>{
 
  const response = await api.patch(`/cliente/${id}`,data)
-
- console.log("ClienteService",response)
-
  return response.data
 
 }

@@ -6,6 +6,9 @@ import DeleteIcon from "@mui/icons-material/Delete"
 export default function ClienteTable({
  clientes,
  loading,
+ page,
+ total,
+ onPageChange,
  onEdit,
  onDelete
 }: any) {
@@ -56,13 +59,16 @@ export default function ClienteTable({
 
    pageSizeOptions={[10]}
 
-   initialState={{
-    pagination:{
-     paginationModel:{pageSize:10,page:0}
-    }
-   }}
+   paginationMode="server"
+   rowCount={total}
 
-   disableRowSelectionOnClick
+   paginationModel={{page,pageSize:10}}
+
+    onPaginationModelChange={(model)=>{
+    onPageChange(model.page)
+    }}
+
+    disableRowSelectionOnClick
   />
 
  )

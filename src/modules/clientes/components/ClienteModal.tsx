@@ -100,12 +100,9 @@ export default function ClienteModal({
         ativo: true
     }
 
-    console.log("Dados enviados:",dados)    
+     
 
-  if(cliente){
-
-    console.log("Dentro do IF Cliente model cliente:",cliente) 
-    console.log("Dentro do IF Cliente model Dados:",dados) 
+  if(cliente){ 
 
    await atualizarCliente(cliente.id,dados)
 

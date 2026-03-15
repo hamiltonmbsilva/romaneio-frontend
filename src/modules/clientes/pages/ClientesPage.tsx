@@ -10,8 +10,7 @@ import ClienteTable from "../components/ClienteTable"
 import ClienteModal from "../components/ClienteModal"
 import FiltroClientes from "../components/FiltroClientes"
 
-import { listarClientes } from "../services/clienteService"
-
+import { listarClientes, deletarCliente } from "../services/clienteService"
 //import { debounce } from "lodash"
 
 export default function ClientesPage(){
@@ -25,17 +24,43 @@ export default function ClientesPage(){
  const [cidade,setCidade] = useState("")
  const [estado,setEstado] = useState("")
 
+ const [page,setPage] = useState(0)
+ const [total,setTotal] = useState(0)
+
  const carregar = async ()=>{
 
   setLoading(true)
 
-  const data = await listarClientes(1,search)
+  const result = await listarClientes(page+1,search)
 
-  setClientes(data)
+ setClientes(result.data)
+ setTotal(result.total)
 
-  setLoading(false)  
+ setLoading(false) 
 
  }
+
+
+ const removerCliente = async (id:string) => {
+
+ const confirmar = window.confirm("Deseja realmente excluir este cliente?")
+
+ if(!confirmar) return
+
+ try{
+
+  await deletarCliente(id)
+
+  carregar() // recarrega a tabela
+
+ }catch(error){
+
+  console.error("Erro ao deletar cliente",error)
+  alert("Erro ao deletar cliente")
+
+ }
+
+}
 
  
 
@@ -47,7 +72,7 @@ export default function ClientesPage(){
 
  useEffect(()=>{
   carregar()
- },[search])
+ },[search,page])
 
  return(
 
@@ -82,12 +107,15 @@ export default function ClientesPage(){
    <ClienteTable
     clientes={clientes}
     loading={loading}
+    page={page}
+    total={total}
+    onPageChange={setPage}
     onEdit={(c:any)=>{
-    setClienteEdit(c)
-    setOpenModal(true)
+      setClienteEdit(c)
+      setOpenModal(true)
     }}
     onDelete={(id:string)=>{
-    console.log("deletar",id)
+      removerCliente(id)      
     }}
     />
 
